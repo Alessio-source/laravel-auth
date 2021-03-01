@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Post;
 
+use App\Mail\SendNewMail;
+use Illuminate\Support\Facades\Mail;
+
 class AdminController extends Controller
 {
 
@@ -46,6 +49,7 @@ class AdminController extends Controller
         $data['img_path'] = Storage::disk('public')->put('images', $data['img_path']);
         $post->fill($data);
         $post->save();
+        Mail::to('mail@mail.it')->send(new SendNewMail());
         return redirect()->route('admin.index')->with('message', "Il posto con il titolo: " . $data['title'] . " è stato creato con successo!");
     }
 
