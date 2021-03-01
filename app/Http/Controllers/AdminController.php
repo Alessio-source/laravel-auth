@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use App\Post;
 
 class AdminController extends Controller
 {
@@ -17,7 +19,8 @@ class AdminController extends Controller
      */
     public function index()
     {
-        return view('admin');
+        $posts = Post::all();
+        return view('admin', compact("posts"));
     }
 
     /**
@@ -27,7 +30,7 @@ class AdminController extends Controller
      */
     public function create()
     {
-        //
+        return view('create');
     }
 
     /**
@@ -38,7 +41,12 @@ class AdminController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $post = new Post();
+        $data = $request->all();
+        $data['img_path'] = Storage::disk('public')->put('images', $data['img_path']);
+        $post->fill($data);
+        $post->save();
+        return redirect()->route('admin.index')->with('message', "Il posto con il titolo: " . $data['title'] . " è stato creato con successo!");
     }
 
     /**
